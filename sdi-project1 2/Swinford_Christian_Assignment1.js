@@ -16,6 +16,9 @@
 	var eDefense;
 	var eSpeed;
 	
+	var encounter = false;
+	var distance = 20;
+	
 	pStats();
 	
 	function pStats()
@@ -25,43 +28,44 @@
 		pDefense = (Math.floor(Math.random()*10)+7);
 		pSpeed = (Math.floor(Math.random()*20)+7);
 		
+		var distance = 20;
+		
 		document.write("<p>" + pName +
 				'<br/>' + "Player Class: " + pSkillSets +
 				'<br/>' + "Player Level: " + pLevel +
 				'<br/>' + "Player Attack: " + pAttack +
 				'<br/>' + "Player Defense: " + pDefense +
 				'<br/>' + "Player Speed: " + pSpeed + '<br/><br/>' + "</p>");
-		eStatsGen();
-	}
-	
-	function eStatsGen() //Generates enemy's stats.
-	{
-		//randomly generate which name to use
-		random=(Math.floor(Math.random()*2));
-		
-		if(random <=1)
-		{
-			eName = "Wolf";
-			}
-		if (random >=2)
-		{
-			eName = "Ghoul";
-			}
-		//randomly generate enemy stats.
-		eAttack = (Math.floor(Math.random()*15)+7);
-		eDefense = (Math.floor(Math.random()*10)+7);
-		eSpeed = (Math.floor(Math.random()*20)+7);
 		
 		start();
 	}
 	
 	
+	
+	
 	function start() //User Input decision.
 	{	
-	document.write("<p>Do you wish to fight? 'Yes' or 'No'</p>")
-	var fight = prompt("Do you wish to fight? 'Yes' or 'No'", "Yes");
+	document.write("<p>Do you wish to fight? 'Yes' or 'No'</p>");
 	
-
+	
+	//randomly generate enemy name to use.
+	random=(Math.floor(Math.random()*2));
+	
+	if(random <=1)
+	{
+		eName = "Wolf";
+		}
+	if (random >=2)
+	{
+		eName = "Ghoul";
+		}
+	//randomly generate enemy stats.
+	eAttack = (Math.floor(Math.random()*15)+7);
+	eDefense = (Math.floor(Math.random()*10)+7);
+	eSpeed = (Math.floor(Math.random()*20)+7);
+	
+	encounter = false;
+	var fight = prompt("Do you wish to fight? 'Yes' or 'No'", "Yes");
 	if(fight.toLowerCase() == "yes")
 	{
 		FIGHT(eName, eDefense); //if player wants to fight, run FIGHT Function.
@@ -72,9 +76,13 @@
 	}
 	}
 
-
+	
 	function FIGHT(creature, def) // gets the creature name and defense, 
 	{
+		
+		
+		
+		//ask player if they want to attack, or run.
 		var action= prompt("A " + creature +" is attacking you!\n" +
 						   creature +"'s Defense is: " + def +
 						   "\nWhat action do you wish to take? \n'Fight' or 'Run' or 'Scan'","Fight");
@@ -83,12 +91,12 @@
 			eDefense-= pAttack;
 			if(eDefense>=1)
 			{
-				Fight();
+				FIGHT(eName, eDefense);
 			}
 			if(eDefense<=0)
 			{
-				
-				endGame(true);
+				goHome(distance);
+				//endGame(true);
 			}
 		}
 		if(action.toLowerCase()=="scan")
@@ -102,15 +110,51 @@
 		
 	}
 	
+	function goHome(eta)
+	{
+		
+		document.write("Quickly, " + pName + " runs home while being chased by the wolves:")
+		
+		while(eta>= 0)
+		{
+			
+			var ran = (Math.floor(Math.random()*100)+1)
+			
+			document.write("<br/>Distance from home is " + eta);
+			if(ran >>25 && ran << 30)
+			{
+				encounter = true;
+				if (encounter)
+					break;
+			}
+			if(ran >> 75 && ran << 80)
+			{
+				encounter = true;
+				if (encounter)
+					break;
+			}
+			
+				eta--;
+			distance--;
+		}
+		if (encounter){
+			start();
+			}
+			
+	if(eta<=0)
+		endGame(true);
+	
+	}
+	
 	function eStats() //displays enemy's stats
 	{
 		
 		document.write("<p>" + eName +
-				'<br/>' + "Player Class: " + eSkillSets +
-				'<br/>' + "Player Level: " + eLevel +
-				'<br/>' + "Player Attack: " + eAttack +
-				'<br/>' + "Player Defense: " + eDefense +
-				'<br/>' + "Player Speed: " + eSpeed + '<br/><br/></p>');
+				'<br/>' + "Enemy Class: " + eSkillSets +
+				'<br/>' + "Enemy Level: " + eLevel +
+				'<br/>' + "Enemy Attack: " + eAttack +
+				'<br/>' + "Enemy Defense: " + eDefense +
+				'<br/>' + "Enemy Speed: " + eSpeed + '<br/><br/></p>');
 		
 		FIGHT(eName, eDefense);
 		
@@ -138,7 +182,7 @@
 				}
 				else
 				{
-					endGame(false);
+					goHome();
 				}
 			}
 		}
@@ -167,7 +211,8 @@
 	{
 		if(win)
 		{
-			var rePlay = prompt("YOU WIN! Do you wish to play again? 'Yes' or 'No'", "Yes");
+			var rePlay = prompt("YOU WIN! You made it home! \n" +
+					"Do you wish to play again? 'Yes' or 'No'", "Yes");
 			if(rePlay.toLowerCase()== "yes")
 			{
 				pStats();
